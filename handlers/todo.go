@@ -13,7 +13,7 @@ func GetTodos(c *fiber.Ctx) error {
 	return c.Status(200).JSON(todos)
 }
 
-func GetDog(c *fiber.Ctx) error {
+func GetTodo(c *fiber.Ctx) error {
 	id := c.Params("id")
 	var todo entities.Todo
 
@@ -24,4 +24,35 @@ func GetDog(c *fiber.Ctx) error {
 	}
 
 	return c.Status(200).JSON(todo)
+}
+
+func AddTodo(c *fiber.Ctx) error {
+	var todo = new(entities.Todo)
+
+	if err := c.BodyParser(todo); err != nil {
+		return c.Status(503).SendString(err.Error())
+	}
+
+	config.Database.Create(&todo)
+	return c.Status(201).JSON(todo)
+}
+
+func UpdateTodo(c *fiber.Ctx) error {
+	id := c.Params("id")
+	todo := new(entities.Todo)
+
+	if err := c.BodyParser(todo); err != nil {
+		return c.Status(503).SendString(err.Error())
+	}
+
+	config.Database.Where("id = ?", id).Updates(&todo)
+
+	return c.Status(200).JSON(todo)
+}
+
+func DeleteTodo(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	config.Database.Delete(&entities.Todo{}, id)
+	return c.SendStatus(200)
 }

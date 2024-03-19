@@ -1,32 +1,24 @@
 package main
 
 import (
+	"log"
+
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
+	"github.com/karledenstal/golang-todo/handlers"
 )
 
-type Todo struct {
-	gorm.Model
-	ID          uint   `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Done        bool   `json:"done"`
-}
-
 func main() {
-	db, err := gorm.Open(sqlite.Open("todo.db"), &gorm.Config{})
-	if err != nil {
-		panic("Failed to connect to database")
-	}
-
-	db.AutoMigrate(&Todo{})
-
 	app := fiber.New()
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
 
-	app.Listen(":9090")
+	app.Get("/todos", handlers.GetTodos)
+	app.Get("/todos/:id", handlers.GetTodo)
+	app.Post("/todos", handlers.AddTodo)
+	app.Put("/todos/:id", handlers.UpdateTodo)
+	app.Delete("/todos/:id", handlers.DeleteTodo)
+
+	log.Fatal(app.Listen(":9090"))
 }
