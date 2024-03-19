@@ -27,7 +27,7 @@ func GetTodo(c *fiber.Ctx) error {
 }
 
 func AddTodo(c *fiber.Ctx) error {
-	var todo = new(entities.Todo)
+	todo := new(entities.Todo)
 
 	if err := c.BodyParser(todo); err != nil {
 		return c.Status(503).SendString(err.Error())

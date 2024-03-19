@@ -4,11 +4,14 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/karledenstal/golang-todo/config"
 	"github.com/karledenstal/golang-todo/handlers"
 )
 
 func main() {
 	app := fiber.New()
+
+	config.Connect()
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
